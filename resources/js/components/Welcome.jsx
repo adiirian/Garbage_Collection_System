@@ -1,43 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const Welcome = ({ user, isAuthenticated, routes }) => {
-    const [stats, setStats] = useState({
-        totalBins: 0,
-        activeAlerts: 0,
-        collectionsToday: 0,
-        efficiencyRate: 0
-    });
-
-    useEffect(() => {
-        // Fetch system stats
-        fetch('/api/admin/analytics/bin-summary')
-            .then(response => response.json())
-            .then(data => {
-                setStats(prev => ({ ...prev, totalBins: data.total_bins || 5 }));
-            })
-            .catch(error => console.log('Stats not available'));
-
-        fetch('/api/admin/analytics/alert-stats')
-            .then(response => response.json())
-            .then(data => {
-                setStats(prev => ({ ...prev, activeAlerts: data.alerts_by_status?.open || 2 }));
-            })
-            .catch(error => console.log('Stats not available'));
-
-        fetch('/api/admin/analytics/collections/today')
-            .then(response => response.json())
-            .then(data => {
-                setStats(prev => ({ ...prev, collectionsToday: data.collections_today || 3 }));
-            })
-            .catch(error => console.log('Stats not available'));
-
-        fetch('/api/admin/analytics/collection/efficiency')
-            .then(response => response.json())
-            .then(data => {
-                setStats(prev => ({ ...prev, efficiencyRate: Math.round(data.overall_efficiency || 60) }));
-            })
-            .catch(error => console.log('Stats not available'));
-    }, []);
 
     return (
         <div className="py-12">
@@ -46,7 +9,7 @@ const Welcome = ({ user, isAuthenticated, routes }) => {
                     <div className="p-6 bg-white border-b border-gray-200">
                         <div className="text-center">
                             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                                Welcome to the Garbage Collection System
+                                Welcome to the Garbage Collection Management System
                             </h1>
                             <p className="text-lg text-gray-600 mb-8">
                                 Efficient waste management for a cleaner community
@@ -107,29 +70,6 @@ const Welcome = ({ user, isAuthenticated, routes }) => {
                                 </div>
                             )}
 
-                        </div>
-
-                        {/* Stats Section */}
-                        <div className="mt-12 bg-gray-50 rounded-lg p-8">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-8">System Overview</h2>
-                            <div className="grid md:grid-cols-4 gap-6">
-                                <div className="text-center">
-                                    <div className="text-3xl font-bold text-green-600">{stats.totalBins}</div>
-                                    <div className="text-gray-600">Total Bins</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-bold text-blue-600">{stats.activeAlerts}</div>
-                                    <div className="text-gray-600">Active Alerts</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-bold text-purple-600">{stats.collectionsToday}</div>
-                                    <div className="text-gray-600">Collections Today</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-bold text-orange-600">{stats.efficiencyRate}%</div>
-                                    <div className="text-gray-600">Efficiency Rate</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
