@@ -5,7 +5,8 @@ use App\Http\Controllers\PublicUser\AlertController;
 
 // Public routes (stateless - keep here)
 Route::prefix('public')->group(function () {
-    Route::post('report', [AlertController::class, 'report']);
+    Route::post('report', [AlertController::class, 'store']);
+    Route::get('welcome', [AlertController::class, 'welcome']);
 });
 
 // Analytics routes removed - now only in web.php for auth consistency
