@@ -58,4 +58,11 @@ class AlertController extends Controller
 
         return response()->json($alert, 201);
     }
+
+    public function welcome(Request $request)
+    {
+        \Log::info("Request received: {$request->method()} {$request->path()}");
+
+        return response()->json(['message' => 'Welcome to the Garbage Collection System!']);
+    }
 }
