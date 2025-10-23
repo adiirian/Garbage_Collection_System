@@ -8,6 +8,10 @@
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold text-gray-900">Collector Dashboard</h1>
                     <div class="flex space-x-4">
+                        <button id="add-bin-btn"
+                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                            + Add Bin
+                        </button>
                         <a href="{{ route('collector.bins.index') }}"
                             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
                             Manage Bins
@@ -20,6 +24,54 @@
                             </button>
                         </form>
                     </div>
+                </div>
+
+                <!-- Add Bin Form -->
+                <div id="add-bin-form-container" class="mb-8 hidden">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Add New Bin</h2>
+                    <form id="add-bin-form" class="bg-gray-50 p-6 rounded-lg">
+                        @csrf
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="bin-name" class="block text-sm font-medium text-gray-700">Bin Name</label>
+                                <input type="text" id="bin-name" name="name" required
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="bin-latitude"
+                                    class="block text-sm font-medium text-gray-700">Latitude</label>
+                                <input type="number" step="any" id="bin-latitude" name="latitude" required
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="bin-longitude"
+                                    class="block text-sm font-medium text-gray-700">Longitude</label>
+                                <input type="number" step="any" id="bin-longitude" name="longitude" required
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="bin-level" class="block text-sm font-medium text-gray-700">Level</label>
+                                <select id="bin-level" name="level" required
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Select Level</option>
+                                    <option value="empty">Empty</option>
+                                    <option value="partial">Partial</option>
+                                    <option value="full">Full</option>
+                                    <option value="overflowing">Overflowing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end space-x-4">
+                            <button type="button" id="cancel-add-bin"
+                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                                Create Bin
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- System Overview -->
@@ -236,13 +288,26 @@
 </div>
 
 <script>
+// Toggle Add Bin Form
+document.getElementById('add-bin-btn').addEventListener('click', function() {
+    const formContainer = document.getElementById('add-bin-form-container');
+    formContainer.classList.toggle('hidden');
+});
+
+// Cancel Add Bin
+document.getElementById('cancel-add-bin').addEventListener('click', function() {
+    const formContainer = document.getElementById('add-bin-form-container');
+    formContainer.classList.add('hidden');
+    document.getElementById('add-bin-form').reset();
+});
+
 // Add Bin Form Handler
 document.getElementById('add-bin-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
 
-    fetch('/collector/bins', { // Updated URL: removed /api
+    fetch('/collector/bins', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -262,8 +327,9 @@ document.getElementById('add-bin-form').addEventListener('submit', function(e) {
                 alert(data.message);
                 // Add new bin to table
                 addBinToTable(data.bin);
-                // Clear form
+                // Clear form and hide
                 document.getElementById('add-bin-form').reset();
+                document.getElementById('add-bin-form-container').classList.add('hidden');
                 // Update counters
                 updateCounters();
             }
@@ -277,7 +343,7 @@ document.getElementById('add-bin-form').addEventListener('submit', function(e) {
 // Edit Bin Functions
 function editBin(binId) {
     // Fetch bin data and populate modal
-    fetch(`/collector/bins/${binId}`, { // Updated URL: removed /api
+    fetch(`/collector/bins/${binId}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
@@ -314,7 +380,7 @@ document.getElementById('edit-bin-form').addEventListener('submit', function(e) 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
 
-    fetch(`/collector/bins/${binId}`, { // Updated URL: removed /api
+    fetch(`/collector/bins/${binId}`, {
             method: 'PUT',
             body: JSON.stringify(data),
             headers: {
@@ -346,7 +412,7 @@ document.getElementById('edit-bin-form').addEventListener('submit', function(e) 
 // Delete Bin Function
 function deleteBin(binId) {
     if (confirm('Are you sure you want to delete this bin?')) {
-        fetch(`/collector/bins/${binId}`, { // Updated URL: removed /api
+        fetch(`/collector/bins/${binId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -379,7 +445,7 @@ function deleteBin(binId) {
 // View Bin Details Function
 function viewBinDetails(binId) {
     // Fetch bin data and show in modal
-    fetch(`/admin/bins/${binId}`, { // Updated URL: removed /api (ensure this route exists in web.php admin group)
+    fetch(`/admin/bins/${binId}`, {
             headers: {
                 'Accept': 'application/json'
             }
@@ -415,7 +481,7 @@ function closeDetailsModal() {
 // Collect Bin Function
 function collect(binId) {
     if (confirm('Mark this bin as collected?')) {
-        fetch(`/collector/bins/${binId}/clean`, { // Updated URL: removed /api
+        fetch(`/collector/bins/${binId}/clean`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -477,7 +543,7 @@ function updateBinInTable(binId, bin) {
 
 function updateCounters() {
     // Fetch updated counts from server via API
-    fetch('/admin/analytics/bins/summary', { // Updated URL: removed /api
+    fetch('/admin/analytics/bins/summary', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
@@ -505,7 +571,7 @@ function updateCounters() {
 
 // Function to update total collections counter
 function updateTotalCollections() {
-    fetch('/admin/analytics/collections/today', { // Updated URL: removed /api
+    fetch('/admin/analytics/collections/today', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'

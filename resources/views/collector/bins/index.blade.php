@@ -12,10 +12,6 @@
                             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
                             ← Back to Dashboard
                         </a>
-                        <a href="{{ route('collector.bins.create') }}"
-                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
-                            + Add New Bin
-                        </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit"
