@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class BinAlertRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true; // Allow all users to send alerts
+    }
+
+    public function rules()
+    {
+        return [
+            'bin_id' => 'required|exists:bins,id',
+            'message' => 'required|string|max:255',
+        ];
+    }
+}
+
+class BinStatusUpdateRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true; // Allow collectors to update bin statuses
+    }
+
+    public function rules()
+    {
+        return [
+            'bin_id' => 'required|exists:bins,id',
+            'status' => 'required|in:full,empty,overflowing',
+        ];
+    }
+}

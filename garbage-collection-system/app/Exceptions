@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Exceptions;
+
+use Exception;
+
+class BinNotFoundException extends Exception
+{
+    protected $message = 'The specified garbage bin was not found.';
+}
+
+class AlertNotFoundException extends Exception
+{
+    protected $message = 'The specified alert was not found.';
+}
+
+class UnauthorizedActionException extends Exception
+{
+    protected $message = 'You are not authorized to perform this action.';
+}
