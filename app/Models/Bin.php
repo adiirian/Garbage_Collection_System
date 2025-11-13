@@ -9,7 +9,7 @@ class Bin extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'latitude', 'longitude', 'level', 'notes', 'collected'];
+    protected $fillable = ['name', 'area_name', 'level', 'collected', 'type', 'notes'];
 
     public function alerts()
     {
@@ -29,7 +29,8 @@ class Bin extends Model
         return [
             'bin_id' => $this->id,
             'name' => $this->name,
-            'current_level' => $this->level,
+            'collected' => $this->collected,
+            'type' => $this->type,
             'total_alerts' => $totalAlerts,
             'open_alerts' => $openAlerts,
             'closed_alerts' => $closedAlerts,
@@ -44,21 +45,25 @@ class Bin extends Model
     public static function getBinSummaryStats()
     {
         $totalBins = self::count();
-        $binsByLevel = self::selectRaw('level, COUNT(*) as count')
-            ->groupBy('level')
-            ->pluck('count', 'level');
+        $collectedBins = self::where('collected', true)->count();
+        $uncollectedBins = $totalBins - $collectedBins;
+        $binsByType = self::selectRaw('type, COUNT(*) as count')
+            ->groupBy('type')
+            ->pluck('count', 'type');
 
         $binsWithAlerts = self::has('alerts')->count();
 
         return [
             'total_bins' => $totalBins,
-            'bins_by_level' => $binsByLevel,
+            'collected_bins' => $collectedBins,
+            'uncollected_bins' => $uncollectedBins,
+            'bins_by_type' => $binsByType,
             'bins_with_alerts' => $binsWithAlerts,
             'bins_without_alerts' => $totalBins - $binsWithAlerts,
-            'empty_bins' => $binsByLevel['empty'] ?? 0,
-            'partial_bins' => $binsByLevel['partial'] ?? 0,
-            'full_bins' => $binsByLevel['full'] ?? 0,
-            'overflowing_bins' => $binsByLevel['overflowing'] ?? 0,
+            'paper_bins' => $binsByType['paper'] ?? 0,
+            'glass_bins' => $binsByType['glass'] ?? 0,
+            'plastic_bins' => $binsByType['plastic'] ?? 0,
+            'metal_bins' => $binsByType['metal'] ?? 0,
             'total_alerts' => \App\Models\Alert::count(),
             'open_alerts' => \App\Models\Alert::where('status', 'open')->count(),
             'closed_alerts' => \App\Models\Alert::where('status', 'closed')->count(),
@@ -69,27 +74,22 @@ class Bin extends Model
     }
 
     /**
-     * Get collection efficiency data grouped by bin level
+     * Get collection efficiency data grouped by bin type
      */
     public static function getCollectionEfficiencyData()
     {
-        $levels = ['empty', 'partial', 'full', 'overflowing'];
+        $types = ['paper', 'glass', 'plastic', 'metal'];
         $collectionRates = [];
 
-        foreach ($levels as $level) {
-            $binsAtLevel = self::where('level', $level)->with('alerts')->get();
-            $totalBinsAtLevel = $binsAtLevel->count();
-            $collectionsAtLevel = 0;
-
-            foreach ($binsAtLevel as $bin) {
-                $collectionsAtLevel += $bin->alerts->where('type', 'collector_action')->count();
-            }
+        foreach ($types as $type) {
+            $totalBinsOfType = self::where('type', $type)->count();
+            $collectedBinsOfType = self::where('type', $type)->where('collected', true)->count();
 
             $collectionRates[] = [
-                'level' => $level,
-                'total_bins' => $totalBinsAtLevel,
-                'collections' => $collectionsAtLevel,
-                'efficiency_rate' => $totalBinsAtLevel > 0 ? round(($collectionsAtLevel / $totalBinsAtLevel) * 100, 2) : 0,
+                'type' => $type,
+                'total_bins' => $totalBinsOfType,
+                'collections' => $collectedBinsOfType,
+                'efficiency_rate' => $totalBinsOfType > 0 ? round(($collectedBinsOfType / $totalBinsOfType) * 100, 2) : 0,
             ];
         }
 

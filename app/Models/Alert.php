@@ -100,9 +100,9 @@ class Alert extends Model
      */
     public static function getOverallCollectionEfficiency()
     {
-        $totalCollections = self::where('type', 'collector_action')->count();
+        $totalCollected = \App\Models\Bin::where('collected', true)->count();
         $totalBins = \App\Models\Bin::count();
 
-        return $totalBins > 0 ? round(($totalCollections / $totalBins) * 100, 2) : 0;
+        return $totalBins > 0 ? round(($totalCollected / $totalBins) * 100, 2) : 0;
     }
 }

@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +23,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'address',
+        'age',
+        'daily_salary',
+        'status',
+        'profile_picture',
+        'profile_picture_data',
     ];
 
     /**
@@ -53,5 +60,13 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Get the penalties associated with the user.
+     */
+    public function penalties()
+    {
+        return $this->hasMany(Penalty::class);
     }
 }
