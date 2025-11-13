@@ -32,14 +32,12 @@
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
-                            <label for="latitude" class="block text-sm font-medium text-gray-700">Latitude</label>
-                            <input type="number" step="any" id="latitude" name="latitude" required
+                            <label for="area_name" class="block text-sm font-medium text-gray-700">Area Name</label>
+                            <select id="area_name" name="area_name" required
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label for="longitude" class="block text-sm font-medium text-gray-700">Longitude</label>
-                            <input type="number" step="any" id="longitude" name="longitude" required
-                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select Area</option>
+                                <option value="Trinidad Poblacion">Trinidad Poblacion</option>
+                            </select>
                         </div>
                         <div>
                             <label for="level" class="block text-sm font-medium text-gray-700">Level</label>
