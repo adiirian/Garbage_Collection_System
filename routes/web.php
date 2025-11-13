@@ -7,7 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Collector\CollectionController;
-use App\Http\Controllers\PublicUser\AlertController;
+use App\Http\Controllers\Residents\AlertController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -31,8 +31,17 @@ Route::middleware(['auth'])->group(function () {
     // Admin routes (moved analytics here for auth consistency)
     Route::prefix('admin')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-        Route::post('bins/{bin}/{level}', [DashboardController::class, 'updateBinLevel']);
+        Route::post('bins/{bin}/{collected}', [DashboardController::class, 'updateBinCollectedStatus']);
         Route::get('bins/{bin}', [DashboardController::class, 'getBin'])->name('admin.bins.show');  // Add this for viewBinDetails
+
+        Route::get('collector-management', [App\Http\Controllers\Admin\CollectorManagementController::class, 'index'])->name('admin.collector-management');
+        Route::put('collectors/{id}', [App\Http\Controllers\Admin\CollectorManagementController::class, 'update'])->name('admin.collectors.update');
+        Route::post('collectors/{id}/penalty', [App\Http\Controllers\Admin\CollectorManagementController::class, 'applyPenalty'])->name('admin.collectors.apply-penalty');
+        Route::get('collectors/{id}/penalties', [App\Http\Controllers\Admin\CollectorManagementController::class, 'getPenalties'])->name('admin.collectors.penalties');
+        Route::get('assignments', [App\Http\Controllers\Admin\CollectorManagementController::class, 'getAssignments'])->name('admin.assignments.index');
+        Route::post('assignments', [App\Http\Controllers\Admin\CollectorManagementController::class, 'createAssignment'])->name('admin.assignments.store');
+        Route::put('assignments/{id}', [App\Http\Controllers\Admin\CollectorManagementController::class, 'updateAssignment'])->name('admin.assignments.update');
+        Route::delete('assignments/{id}', [App\Http\Controllers\Admin\CollectorManagementController::class, 'deleteAssignment'])->name('admin.assignments.destroy');
 
         Route::prefix('analytics')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\AnalyticsController::class, 'index'])
@@ -41,12 +50,13 @@ Route::middleware(['auth'])->group(function () {
             Route::get('alerts/stats', [App\Http\Controllers\Admin\AnalyticsController::class, 'alertStats']);
             Route::get('collection/efficiency', [App\Http\Controllers\Admin\AnalyticsController::class, 'collectionEfficiency']);
             Route::get('collections/today', [App\Http\Controllers\Admin\AnalyticsController::class, 'collectionsToday']);
+            Route::get('penalties/stats', [App\Http\Controllers\Admin\AnalyticsController::class, 'penaltiesStats']);
         });
     });
 
     Route::get('/collector/dashboard', [CollectionController::class, 'dashboard'])->name('collector.collection.index');
 
-    Route::get('/public/dashboard', [AlertController::class, 'dashboard'])->name('public.alerts.index');
+    Route::get('/residents/dashboard', [AlertController::class, 'dashboard'])->name('residents.alerts.index');
 
     Route::post('/alerts', [AlertController::class, 'store'])->name('alerts.store');
 
@@ -63,5 +73,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/bins/{bin}/status', [CollectionController::class, 'updateStatus'])->name('collector.bins.updateStatus');
         Route::post('/bins/{bin}/clean', [CollectionController::class, 'markCleaned'])->name('collector.bins.markCleaned');
         Route::put('/bins/{bin}', [CollectionController::class, 'updateBin'])->name('collector.bins.update');
+
+        Route::get('/profile', [CollectionController::class, 'showProfile'])->name('collector.profile');
+        Route::post('/profile', [CollectionController::class, 'updateProfile'])->name('collector.profile.update');
     });
 });
