@@ -11,23 +11,27 @@ class BinSeeder extends Seeder
     {
         Bin::firstOrCreate(
             ['name' => 'Trinidad Municipal College Campus'],
-            ['latitude' => 10.0754, 'longitude' => 124.3379, 'level' => 'overflowing']
+            ['area_name' => 'Trinidad Poblacion', 'collected' => false, 'type' => 'plastic']
         );
         Bin::firstOrCreate(
-            ['name' => 'Trinidad Elementary School'],
-            ['latitude' => 10.0813, 'longitude' => 124.3438, 'level' => 'partial']
-        );
-        Bin::firstOrCreate(
-            ['name' => 'Trinidad Cemetery'],
-            ['latitude' => 10.0853, 'longitude' => 124.34307, 'level' => 'full']
+            ['name' => 'Trinidad 1 Elementary School'],
+            ['area_name' => 'Trinidad Poblacion', 'collected' => true, 'type' => 'paper']
         );
         Bin::firstOrCreate(
             ['name' => 'Trinidad Market'],
-            ['latitude' => 10.0790, 'longitude' => 124.3439, 'level' => 'overflowing']
+            ['area_name' => 'Trinidad Poblacion', 'collected' => false, 'type' => 'metal']
         );
         Bin::firstOrCreate(
             ['name' => 'Trinidad Riverside'],
-            ['latitude' => 9.77091, 'longitude' => 24.49714, 'level' => 'full']
+            ['area_name' => 'Trinidad Poblacion', 'collected' => true, 'type' => 'glass']
+        );
+        Bin::firstOrCreate(
+            ['name' => 'Trinidad Public Plaza'],
+            ['area_name' => 'Trinidad Poblacion', 'collected' => false, 'type' => 'paper']
+        );
+        Bin::firstOrCreate(
+            ['name' => 'Trinidad Church'],
+            ['area_name' => 'Trinidad Poblacion', 'collected' => true, 'type' => 'plastic']
         );
     }
 }

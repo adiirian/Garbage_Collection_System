@@ -26,30 +26,35 @@ class UserSeeder extends Seeder
 
         // Create default admin user
         User::updateOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@admin.com'],
             [
                 'name' => 'Default Admin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin47'),
                 'role_id' => $adminRole->id,
             ]
         );
 
         // Create default collector user
         User::updateOrCreate(
-            ['email' => 'collector@example.com'],
+            ['email' => 'collector@collector.com'],
             [
                 'name' => 'Default Collector',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('collector'),
                 'role_id' => $collectorRole->id,
+                'address' => '123 Collector Street',
+                'age' => 30,
+                'daily_salary' => 50.00,
+                'assigned_area' => 'Downtown',
+                'status' => 'off_duty',
             ]
         );
 
         // Create default public user
         User::updateOrCreate(
-            ['email' => 'public@example.com'],
+            ['email' => 'resident@resident.com'],
             [
-                'name' => 'Default Public User',
-                'password' => Hash::make('password'),
+                'name' => 'Default Resident User',
+                'password' => Hash::make('resident'),
                 'role_id' => $publicRole->id,
             ]
         );
