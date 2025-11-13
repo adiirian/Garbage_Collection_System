@@ -18,6 +18,12 @@ class AlertController extends Controller
         return view('residents.dashboard', compact('bins', 'userAlerts'));
     }
 
+    public function index()
+    {
+        $userAlerts = Alert::where('reported_by', Auth::id())->get();
+        return response()->json($userAlerts);
+    }
+
     // Public user reports a bin (by id or lat/lng)
     public function store(Request $request)
     {
