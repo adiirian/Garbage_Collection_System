@@ -32,9 +32,9 @@ class LoginController extends Controller
             } elseif ($user->role && strtolower($user->role->name) === 'collector') {
                 return redirect()->route('collector.collection.index');
             } elseif ($user->role && strtolower($user->role->name) === 'public') {
-                return redirect()->route('public.alerts.index');
+                return redirect()->route('residents.alerts.index');
             } else {
-                return redirect()->route('public.alerts.index');
+                return redirect()->route('residents.alerts.index');
             }
         }
 

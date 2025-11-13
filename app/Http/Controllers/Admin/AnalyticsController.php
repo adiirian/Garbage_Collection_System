@@ -70,4 +70,22 @@ class AnalyticsController extends Controller
             ->count();
         return response()->json(['collections_today' => $collectionsToday]);
     }
+
+    /**
+     * Get penalties statistics
+     */
+    public function penaltiesStats()
+    {
+        $totalPenalties = \App\Models\Penalty::count();
+        $totalAmount = \App\Models\Penalty::sum('amount');
+        $penaltiesThisMonth = \App\Models\Penalty::whereMonth('penalty_date', Carbon::now()->month)
+            ->whereYear('penalty_date', Carbon::now()->year)
+            ->count();
+
+        return response()->json([
+            'total_penalties' => $totalPenalties,
+            'total_amount' => $totalAmount,
+            'penalties_this_month' => $penaltiesThisMonth,
+        ]);
+    }
 }

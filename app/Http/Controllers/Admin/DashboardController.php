@@ -24,22 +24,22 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact('bins', 'openAlerts', 'binSummary', 'alertStats', 'todayCollections'));
     }
 
-    // Endpoint to update bin level from sensor (simulate)
-    public function updateBinLevel($binId, $level)
+    // Endpoint to update bin collected status from sensor (simulate)
+    public function updateBinCollectedStatus($binId, $collected)
     {
         $bin = Bin::findOrFail($binId);
 
-        $previous = $bin->level;
-        $bin->level = $level;
+        $previous = $bin->collected;
+        $bin->collected = $collected;
         $bin->save();
 
-        if (in_array($level, ['full', 'overflowing'])) {
+        if (!$collected) {
             Alert::create([
                 'bin_id' => $bin->id,
-                'type' => 'level_change',
-                'level' => $level,
+                'type' => 'collection_needed',
+                'level' => 'uncollected',
                 'status' => 'open',
-                'message' => "Sensor reported level {$level}"
+                'message' => "Bin {$bin->name} needs collection"
             ]);
         }
 

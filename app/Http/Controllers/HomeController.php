@@ -17,7 +17,7 @@ class HomeController extends Controller
             } elseif ($user->role->name === 'Collector') {
                 return redirect()->route('collector.collection.index');
             } else {
-                return redirect()->route('public.alerts.index');
+                return redirect()->route('residents.alerts.index');
             }
         }
 
@@ -31,7 +31,7 @@ class HomeController extends Controller
                 'adminDashboard' => route('admin.dashboard'),
                 'adminAnalytics' => route('admin.analytics'),
                 'collectorDashboard' => route('collector.collection.index'),
-                'publicDashboard' => route('public.alerts.index'),
+                'publicDashboard' => route('residents.alerts.index'),
             ]
         ]);
     }
