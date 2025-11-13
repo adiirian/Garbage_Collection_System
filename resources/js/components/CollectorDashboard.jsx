@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const CollectorDashboard = ({ bins, openAlerts, routes, csrfToken }) => {
     const [binData, setBinData] = useState(bins || []);
     const [alertData, setAlertData] = useState(openAlerts || []);
+    const [openAlertsCount, setOpenAlertsCount] = useState(0);
     const [todayCollections, setTodayCollections] = useState(0);
     const [profile, setProfile] = useState({});
     const [assignments, setAssignments] = useState([]);
@@ -24,6 +25,14 @@ const CollectorDashboard = ({ bins, openAlerts, routes, csrfToken }) => {
                 setTodayCollections(data.collections_today || 0);
             })
             .catch(error => console.log('Collections data not available'));
+
+        // Fetch open alerts count
+        fetch('/api/admin/analytics/alerts/stats')
+            .then(response => response.json())
+            .then(data => {
+                setOpenAlertsCount(data.open_alerts || 0);
+            })
+            .catch(error => console.log('Alerts data not available'));
 
         // Fetch user profile
         fetch('/api/collector/profile')
@@ -168,7 +177,7 @@ const CollectorDashboard = ({ bins, openAlerts, routes, csrfToken }) => {
                             </div>
                             <div className="bg-red-50 border border-red-200 rounded-lg p-6">
                                 <h3 className="text-xl font-semibold text-red-800 mb-2">Open Alerts</h3>
-                                <p className="text-3xl font-bold text-red-600">{alertData.length}</p>
+                                <p className="text-3xl font-bold text-red-600">{openAlertsCount}</p>
                             </div>
                             <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                                 <h3 className="text-xl font-semibold text-green-800 mb-2">Today's Collections</h3>

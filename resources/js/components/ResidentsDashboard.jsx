@@ -15,14 +15,19 @@ const ResidentsDashboard = ({ bins, userAlerts, routes, csrfToken }) => {
             })
             .catch(error => console.log('Bins data not available'));
 
-        // Fetch open alerts count
-        fetch('/api/admin/analytics/alerts/stats')
+        // Fetch user's alerts dynamically
+        fetch('/api/residents/alerts')
             .then(response => response.json())
             .then(data => {
-                setOpenAlerts(data.open_alerts || 0);
+                setAlertData(data);
             })
             .catch(error => console.log('Alerts data not available'));
     }, []);
+
+    useEffect(() => {
+        // Calculate open alerts count from user's alerts
+        setOpenAlerts(alertData.filter(alert => alert.status === 'open').length);
+    }, [alertData]);
 
     const handleCardClick = (cardType) => {
         setActiveCard(cardType);
@@ -125,24 +130,26 @@ const ResidentsDashboard = ({ bins, userAlerts, routes, csrfToken }) => {
                         {/* Conditionally render sections based on activeCard */}
                         {activeCard === 'total_bins' && (
                             <div className="mb-8">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-4">Nearby Bins</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 mb-4">All Bins</h2>
                                 <div className="bg-gray-100 rounded-lg p-6">
-                                    <p className="text-gray-600 mb-4">Find and report issues with waste bins in your area.</p>
+                                    <p className="text-gray-600 mb-4">View all waste bins in your area, including their types and current status.</p>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        {binData.filter(bin => !bin.collected).map((bin) => (
-                                            <div key={bin.id} className="bg-white rounded-lg p-4 shadow">
+                                        {binData.map((bin) => (
+                                            <div key={bin.id} className={`bg-white rounded-lg p-4 shadow border-2 ${bin.collected ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
                                                 <h3 className="font-semibold text-gray-900">{bin.name}</h3>
                                                 <p className="text-sm text-gray-600">
                                                     Location: {bin.area_name}
                                                 </p>
-                                                <p className="text-sm text-gray-600">Status: {bin.collected ? 'Collected' : 'Not Collected'}</p>
+                                                <p className={`text-sm ${bin.collected ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}`}>Status: {bin.collected ? 'Collected' : 'Not Collected'}</p>
                                                 <p className="text-sm text-gray-600">Type: {bin.type}</p>
-                                                <button
-                                                    onClick={() => reportBinIssue(bin.id)}
-                                                    className="mt-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
-                                                >
-                                                    Report Issue
-                                                </button>
+                                                {!bin.collected && (
+                                                    <button
+                                                        onClick={() => reportBinIssue(bin.id)}
+                                                        className="mt-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                                                    >
+                                                        Report Issue
+                                                    </button>
+                                                )}
                                             </div>
                                         ))}
                                     </div>

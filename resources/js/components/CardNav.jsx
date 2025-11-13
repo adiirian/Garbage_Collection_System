@@ -22,7 +22,7 @@ const CardNav = ({ user, isAuthenticated, routes }) => {
                             <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20 hover:bg-white/20 transition-all duration-300">
                                 <a href={routes.home} className="text-white font-bold text-xl flex items-center space-x-2 hover:rotate-12 transition-transform duration-300">
                                     <span className="text-2xl">🗑️</span>
-                                    <span>Garbage Collection System</span>
+                                    <span>Trinidad Garbage Collection Management System</span>
                                 </a>
                             </div>
                         </div>

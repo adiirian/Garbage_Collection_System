@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const AdminDashboard = ({ bins, openAlerts, routes }) => {
     const [binData, setBinData] = useState(bins || []);
     const [alertData, setAlertData] = useState(openAlerts || []);
+    const [openAlertsCount, setOpenAlertsCount] = useState(0);
     const [todayCollections, setTodayCollections] = useState(0);
     const [filteredBins, setFilteredBins] = useState(bins || []);
     const [activeFilter, setActiveFilter] = useState('all');
@@ -24,6 +25,14 @@ const AdminDashboard = ({ bins, openAlerts, routes }) => {
                 setFilteredBins(data);
             })
             .catch(error => console.log('Bin summary data not available'));
+
+        // Fetch open alerts count
+        fetch('/api/admin/analytics/alerts/stats')
+            .then(response => response.json())
+            .then(data => {
+                setOpenAlertsCount(data.open_alerts || 0);
+            })
+            .catch(error => console.log('Alerts data not available'));
     }, []);
 
     const handleCardClick = (filterType) => {
@@ -103,7 +112,7 @@ const AdminDashboard = ({ bins, openAlerts, routes }) => {
                             <div className={`border rounded-lg p-6 cursor-pointer transition-all ${activeFilter === 'alerts' ? 'ring-2 ring-blue-500' : ''}`}
                                  onClick={() => handleCardClick('alerts')}>
                                 <h3 className="text-xl font-semibold mb-2">Open Alerts</h3>
-                                <p className="text-3xl font-bold">{alertData.length}</p>
+                                <p className="text-3xl font-bold">{openAlertsCount}</p>
                             </div>
                         </div>
 
