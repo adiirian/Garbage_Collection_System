@@ -43,52 +43,27 @@
                     </h2>
 
                     @if($binsByType->get($type, collect())->count() > 0)
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        ID</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Name</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Area</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Level</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Collected</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($binsByType->get($type, collect()) as $bin)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        {{ $bin->id }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $bin->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $bin->area_name }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                            @if($bin->level == 'empty') bg-green-100 text-green-800
-                                            @elseif($bin->level == 'partial') bg-yellow-100 text-yellow-800
-                                            @elseif($bin->level == 'full') bg-orange-100 text-orange-800
-                                            @else bg-red-100 text-red-800 @endif">
-                                            {{ ucfirst($bin->level) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $bin->collected ? 'Yes' : 'No' }}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach($binsByType->get($type, collect()) as $bin)
+                        <div
+                            class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-semibold text-gray-900">{{ $bin->name }}</h3>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                    @if($bin->level == 'empty') bg-green-100 text-green-800
+                                    @elseif($bin->level == 'partial') bg-yellow-100 text-yellow-800
+                                    @elseif($bin->level == 'full') bg-orange-100 text-orange-800
+                                    @else bg-red-100 text-red-800 @endif">
+                                    {{ ucfirst($bin->level) }}
+                                </span>
+                            </div>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p><strong>ID:</strong> {{ $bin->id }}</p>
+                                <p><strong>Area:</strong> {{ $bin->area_name }}</p>
+                                <p><strong>Status:</strong> {{ $bin->collected ? 'Collected' : 'Uncollected' }}</p>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                     @else
                     <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">

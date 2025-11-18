@@ -284,4 +284,27 @@ class CollectionController extends Controller
         $user = auth()->user();
         return view('collector.profile', compact('user'));
     }
+
+    // Reset all bins to empty and uncollected
+    public function resetAllBins(Request $request)
+    {
+        $bins = Bin::all();
+        foreach ($bins as $bin) {
+            $bin->level = 'empty';
+            $bin->collected = false;
+            $bin->save();
+        }
+
+        // Close all open alerts
+        Alert::where('status', 'open')->update(['status' => 'closed']);
+
+        // Check if request expects JSON (AJAX) or has Accept: application/json header
+        if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
+            return response()->json([
+                'message' => 'All bins have been reset successfully'
+            ]);
+        }
+
+        return redirect()->route('collector.bins.index')->with('success', 'All bins have been reset successfully');
+    }
 }
