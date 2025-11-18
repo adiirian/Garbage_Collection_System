@@ -17,9 +17,9 @@ class UserSeeder extends Seeder
         // Ensure roles exist
         $adminRole = Role::where('name', 'Admin')->first();
         $collectorRole = Role::where('name', 'Collector')->first();
-        $publicRole = Role::where('name', 'Public')->first();
+        $residentRole = Role::where('name', 'Resident')->first();
 
-        if (!$adminRole || !$collectorRole || !$publicRole) {
+        if (!$adminRole || !$collectorRole || !$residentRole) {
             $this->command->error('Roles not found. Please run RoleSeeder first.');
             return;
         }
@@ -49,13 +49,13 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Create default public user
+        // Create default resident user
         User::updateOrCreate(
             ['email' => 'resident@resident.com'],
             [
                 'name' => 'Default Resident User',
                 'password' => Hash::make('resident'),
-                'role_id' => $publicRole->id,
+                'role_id' => $residentRole->id,
             ]
         );
 
