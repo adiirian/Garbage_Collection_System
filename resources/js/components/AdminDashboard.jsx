@@ -7,6 +7,7 @@ const AdminDashboard = ({ bins, openAlerts, routes }) => {
     const [todayCollections, setTodayCollections] = useState(0);
     const [filteredBins, setFilteredBins] = useState(bins || []);
     const [activeFilter, setActiveFilter] = useState('all');
+    const [typeFilter, setTypeFilter] = useState('all');
 
     useEffect(() => {
         // Fetch today's collections
@@ -22,7 +23,6 @@ const AdminDashboard = ({ bins, openAlerts, routes }) => {
             .then(response => response.json())
             .then(data => {
                 setBinData(data);
-                setFilteredBins(data);
             })
             .catch(error => console.log('Bin summary data not available'));
 
@@ -37,15 +37,7 @@ const AdminDashboard = ({ bins, openAlerts, routes }) => {
 
     const handleCardClick = (filterType) => {
         setActiveFilter(filterType);
-        if (filterType === 'all') {
-            setFilteredBins(binData);
-        } else if (filterType === 'collected') {
-            setFilteredBins(binData.filter(bin => bin.collected));
-        } else if (filterType === 'uncollected') {
-            setFilteredBins(binData.filter(bin => !bin.collected));
-        } else if (filterType === 'alerts') {
-            setFilteredBins(binData.filter(bin => alertData.some(alert => alert.bin_id === bin.id)));
-        }
+        setTypeFilter('all'); // Reset type filter when changing card filter
     };
 
     const getBinTypeColor = (type) => {
@@ -57,6 +49,25 @@ const AdminDashboard = ({ bins, openAlerts, routes }) => {
             default: return 'bg-gray-100 text-gray-800';
         }
     };
+
+    const applyFilters = () => {
+        let filtered = binData;
+        if (activeFilter === 'collected') {
+            filtered = filtered.filter(bin => bin.collected);
+        } else if (activeFilter === 'uncollected') {
+            filtered = filtered.filter(bin => !bin.collected);
+        } else if (activeFilter === 'alerts') {
+            filtered = filtered.filter(bin => alertData.some(alert => alert.bin_id === bin.id));
+        }
+        if (typeFilter !== 'all') {
+            filtered = filtered.filter(bin => bin.type === typeFilter);
+        }
+        setFilteredBins(filtered);
+    };
+
+    useEffect(() => {
+        applyFilters();
+    }, [binData, activeFilter, typeFilter, alertData]);
 
     return (
         <div className="py-12">
@@ -131,7 +142,19 @@ const AdminDashboard = ({ bins, openAlerts, routes }) => {
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <select
+                                                    value={typeFilter}
+                                                    onChange={(e) => setTypeFilter(e.target.value)}
+                                                    className="bg-transparent border-none text-xs font-medium text-gray-500 uppercase tracking-wider focus:outline-none"
+                                                >
+                                                    <option value="all">Type</option>
+                                                    <option value="paper">Paper</option>
+                                                    <option value="glass">Glass</option>
+                                                    <option value="plastic">Plastic</option>
+                                                    <option value="metal">Metal</option>
+                                                </select>
+                                            </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         </tr>
                                     </thead>
